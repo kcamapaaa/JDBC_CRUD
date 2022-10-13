@@ -7,9 +7,9 @@ import com.Vladislav.model.Developer;
 import com.Vladislav.model.Skill;
 import com.Vladislav.model.Specialty;
 
-import javax.accessibility.AccessibleKeyBinding;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class DeveloperView {
@@ -22,18 +22,35 @@ public class DeveloperView {
 
     public void getDeveloperById() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         Developer developer = developerController.getDeveloperById(id);
         System.out.println(developer == null ? "No developer" : developer);
     }
 
     public void getAllDevelopers() {
-        developerController.getAllDevelopers().forEach(System.out::println);
+        List<Developer> allDevelopers = developerController.getAllDevelopers();
+        if (allDevelopers == null) {
+            System.out.println("No developers.");
+        } else {
+            allDevelopers.stream().filter(Objects::nonNull).forEach(System.out::println);
+        }
     }
 
     public void deleteDeveloperById() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         int check = developerController.deleteDeveloperById(id);
         System.out.println(check == 0 ? "Can not delete the developer" : "Successfully deleted!");
     }
@@ -45,17 +62,28 @@ public class DeveloperView {
         String lastName = s.nextLine();
 
         List<Skill> skillList = new ArrayList<>();
-        System.out.println("Enter skills id: ");
+        System.out.println("Enter skills id with spaces\n(Example: 2 3 4 10): ");
         skillView.getAllSkills();
         String[] split = s.nextLine().split(" ");
         for (String s : split) {
-            Skill skill = skillController.getSkillById(Integer.parseInt(s));
-            skillList.add(skill);
+            try {
+                Skill skill = skillController.getSkillById(Integer.parseInt(s));
+                skillList.add(skill);
+            } catch (NumberFormatException e) {
+                System.out.println("Incorrect format");
+                return;
+            }
         }
 
         System.out.println("Choice specialty id: ");
         specialtyView.getAllSpecialties();
-        int specialtyChoice = s.nextInt();
+        int specialtyChoice;
+        try {
+            specialtyChoice = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         Specialty specialty = specialtyController.getSpecialtyById(specialtyChoice);
         Developer check = developerController.addNewDeveloper(new Developer(firstName, lastName, skillList, specialty));
         System.out.println(check == null ? "Not saved" : "Saved");
@@ -63,8 +91,13 @@ public class DeveloperView {
 
     public void updateDeveloper() {
         System.out.println("Enter id of the developer you want to update:");
-        int devId = s.nextInt();
-        s.nextLine();
+        int devId;
+        try {
+            devId = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         System.out.println("Enter new first name: ");
         String firstName = s.nextLine();
         System.out.println("Enter new last name: ");

@@ -12,12 +12,23 @@ public class CommonView {
     public void start() {
         options();
         while (true) {
-            int choice = s.nextInt();
+            int choice;
+            try{
+                choice = Integer.parseInt(s.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Incorrect number.");
+                continue;
+            }
             switch (choice) {
                 case 1 -> {
                     developerView.printDeveloperOptions();
-                    int developerChoice = s.nextInt();
-                    s.nextLine();
+                    int developerChoice;
+                    try {
+                        developerChoice = Integer.parseInt(s.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Incorrect input!");
+                        continue;
+                    }
                     switch (developerChoice) {
                         case 1 -> developerView.getDeveloperById();
                         case 2 -> developerView.getAllDevelopers();
@@ -29,8 +40,13 @@ public class CommonView {
                 }
                 case 2 -> {
                     skillView.printSkillOptions();
-                    int skillChoice = s.nextInt();
-                    s.nextLine();
+                    int skillChoice;
+                    try {
+                        skillChoice = Integer.parseInt(s.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Incorrect input!");
+                        continue;
+                    }
                     switch (skillChoice) {
                         case 1 -> skillView.getSkillById();
                         case 2 -> skillView.getAllSkills();
@@ -42,7 +58,13 @@ public class CommonView {
                 }
                 case 3 -> {
                     specialtyView.printSpecialtyOptions();
-                    int specialtyChoice = s.nextInt();
+                    int specialtyChoice;
+                    try {
+                        specialtyChoice = Integer.parseInt(s.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Incorrect input.");
+                        return;
+                    }
                     s.nextLine();
                     switch (specialtyChoice) {
                         case 1 -> specialtyView.getSpecialtyById();

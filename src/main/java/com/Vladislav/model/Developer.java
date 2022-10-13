@@ -16,7 +16,6 @@ public class Developer {
         this.lastName = lastName;
         this.skillList = skillList;
         this.specialty = specialty;
-        this.status = Status.ACTIVE;
     }
 
     public Developer(String firstName, String lastName, List<Skill> skillList, Specialty specialty) {
@@ -84,9 +83,10 @@ public class Developer {
     public String toString() {
         return "\n===================\n"
                 + "ID: " + id
-                +"\nFirst name: " + firstName
-                +"\nLast name: " + lastName
+                + "\nFirst name: " + firstName
+                + "\nLast name: " + lastName
                 + "\nSkills: " + skillList
-                + "\nSpecialty: " + specialty;
+                + "\nSpecialty: " + specialty
+                + "\n===================\n";
     }
 }

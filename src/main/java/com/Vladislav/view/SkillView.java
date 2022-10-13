@@ -11,7 +11,13 @@ public class SkillView {
 
     public void getSkillById() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         Skill skill = skillController.getSkillById(id);
         System.out.println(skill == null ? "No skill" : skill);
     }
@@ -30,9 +36,14 @@ public class SkillView {
 
     public void updateSkill() {
         System.out.println("Enter ID of the skill you want to update: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         System.out.println("Enter new name: ");
-        s.nextLine();
         String name = s.nextLine();
         Skill skill = new Skill(name);
         int update = skillController.updateSkill(skill, id);
@@ -41,7 +52,13 @@ public class SkillView {
 
     public void deleteSkillByID() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         int update = skillController.deleteSkillById(id);
         System.out.println(update == 0 ? "Not deleted." : "Deleted!");
     }

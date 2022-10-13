@@ -1,7 +1,6 @@
 package com.Vladislav.view;
 
 import com.Vladislav.controller.SpecialtyController;
-import com.Vladislav.model.Skill;
 import com.Vladislav.model.Specialty;
 
 import java.util.Scanner;
@@ -13,7 +12,13 @@ public class SpecialtyView {
 
     public void getSpecialtyById() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         Specialty specialty = specialtyController.getSpecialtyById(id);
         System.out.println(specialty == null ? "No specialty" : specialty);
     }
@@ -32,7 +37,13 @@ public class SpecialtyView {
 
     public void updateSpecialty() {
         System.out.println("Enter ID of the specialty you want to update: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         System.out.println("Enter new name: ");
         s.nextLine();
         String name = s.nextLine();
@@ -43,7 +54,13 @@ public class SpecialtyView {
 
     public void deleteSpecialtyById() {
         System.out.println("Enter ID: ");
-        int id = s.nextInt();
+        int id;
+        try {
+            id = Integer.parseInt(s.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Incorrect typo.");
+            return;
+        }
         int update = specialtyController.deleteSpecialtyById(id);
         System.out.println(update == 0 ? "Not deleted." : "Deleted!");
     }

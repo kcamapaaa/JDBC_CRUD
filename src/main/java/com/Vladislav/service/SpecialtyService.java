@@ -7,26 +7,26 @@ import com.Vladislav.repository.SpecialtyRepository;
 import java.util.List;
 
 public class SpecialtyService {
-    private final DataBaseSpecialtyRepository spcialtyRepository = new DataBaseSpecialtyRepository();
+    private SpecialtyRepository specialtyRepository = new DataBaseSpecialtyRepository();
 
     public Specialty getSpecialtyById(int id) {
-        return spcialtyRepository.getById(id);
+        return specialtyRepository.getById(id);
     }
 
     public List<Specialty> getAllSpecialties() {
-        return spcialtyRepository.getAll();
+        return specialtyRepository.getAll();
     }
 
     public Specialty addNewSpecialty(Specialty specialty) {
-        return spcialtyRepository.save(specialty);
+        return specialtyRepository.save(specialty);
     }
 
     public int updateSpecialty(Specialty specialty, int id) {
-        return spcialtyRepository.update(specialty, id);
+        return specialtyRepository.update(specialty, id);
     }
 
     public int deleteSpecialtyById(int id) {
-        return spcialtyRepository.deleteById(id);
+        return specialtyRepository.deleteById(id);
     }
 
 }

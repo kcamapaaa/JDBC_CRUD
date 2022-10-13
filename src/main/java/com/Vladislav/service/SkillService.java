@@ -7,7 +7,7 @@ import com.Vladislav.repository.SkillRepository;
 import java.util.List;
 
 public class SkillService {
-    private final SkillRepository skillRepository = new DataBaseSkillRepository();
+    private SkillRepository skillRepository = new DataBaseSkillRepository();
 
     public Skill getSkillById(int id) {
         return skillRepository.getById(id);

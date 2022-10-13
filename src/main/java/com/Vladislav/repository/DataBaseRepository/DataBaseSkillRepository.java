@@ -17,11 +17,11 @@ public class DataBaseSkillRepository implements SkillRepository {
     @Override
     public Skill getById(Integer id) {
         String SQL = "SELECT * FROM skills WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Skill skill = null;
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 String skillname = resultSet.getString("name");
                 int skillId = resultSet.getInt("id");
                 skill = new Skill(skillname);
@@ -37,9 +37,9 @@ public class DataBaseSkillRepository implements SkillRepository {
     public List<Skill> getAll() {
         String SQL = "SELECT * FROM skills";
         List<Skill> skillList = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 String skillName = resultSet.getString("name");
                 int skillId = resultSet.getInt("id");
                 Skill skill = new Skill(skillName);
@@ -49,14 +49,14 @@ public class DataBaseSkillRepository implements SkillRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return skillList;
+        return skillList.isEmpty() ? null : skillList;
     }
 
     @Override
     public Skill save(Skill skill) {
         String SQL = "INSERT INTO skills (name) VALUES (?)";
         int update = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             preparedStatement.setString(1, skill.getName());
             update = preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -69,7 +69,7 @@ public class DataBaseSkillRepository implements SkillRepository {
     public int update(Skill skill, int id) {
         String SQL = "UPDATE skills SET name = ? WHERE id = ?";
         int update = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             preparedStatement.setString(1, skill.getName());
             preparedStatement.setInt(2, id);
 
@@ -84,7 +84,7 @@ public class DataBaseSkillRepository implements SkillRepository {
     public int deleteById(Integer id) {
         String SQL = "DELETE FROM skills WHERE ID = ?";
         int updates = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             preparedStatement.setInt(1, id);
             updates = preparedStatement.executeUpdate();
         } catch (SQLException e) {

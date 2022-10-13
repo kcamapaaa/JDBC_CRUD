@@ -7,7 +7,7 @@ import com.Vladislav.repository.DeveloperRepository;
 import java.util.List;
 
 public class DeveloperService {
-    private final DeveloperRepository developerRepository = new DataBaseDeveloperRepository();
+    DeveloperRepository developerRepository = new DataBaseDeveloperRepository();
 
     public Developer getDeveloperById(int id) {
         return developerRepository.getById(id);
