@@ -61,9 +61,14 @@ public class DeveloperView {
         System.out.println("Enter last name: ");
         String lastName = s.nextLine();
 
+        if(skillController.getAllSkills() == null) {
+            System.out.println("Create any skill!");
+            return;
+        } else {
+            System.out.println("Enter skills id with spaces\n(Example: 2 3 4 10): ");
+            skillView.getAllSkills();
+        }
         List<Skill> skillList = new ArrayList<>();
-        System.out.println("Enter skills id with spaces\n(Example: 2 3 4 10): ");
-        skillView.getAllSkills();
         String[] split = s.nextLine().split(" ");
         for (String s : split) {
             try {
@@ -75,8 +80,13 @@ public class DeveloperView {
             }
         }
 
-        System.out.println("Choice specialty id: ");
-        specialtyView.getAllSpecialties();
+        if(specialtyController.getAllSpecialties() == null) {
+            System.out.println("Create any specialty!");
+            return;
+        } else {
+            System.out.println("Choice specialty id: ");
+            specialtyView.getAllSpecialties();
+        }
         int specialtyChoice;
         try {
             specialtyChoice = Integer.parseInt(s.nextLine());

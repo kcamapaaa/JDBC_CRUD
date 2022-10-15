@@ -3,6 +3,7 @@ package com.Vladislav.view;
 import com.Vladislav.model.Skill;
 import com.Vladislav.controller.SkillController;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class SkillView {
@@ -23,7 +24,7 @@ public class SkillView {
     }
 
     public void getAllSkills() {
-        skillController.getAllSkills().stream().sorted().forEach(System.out::println);
+            skillController.getAllSkills().stream().sorted().forEach(System.out::println);
     }
 
     public void addNewSkill() {

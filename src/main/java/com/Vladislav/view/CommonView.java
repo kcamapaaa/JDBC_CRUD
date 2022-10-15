@@ -65,7 +65,6 @@ public class CommonView {
                         System.out.println("Incorrect input.");
                         return;
                     }
-                    s.nextLine();
                     switch (specialtyChoice) {
                         case 1 -> specialtyView.getSpecialtyById();
                         case 2 -> specialtyView.getAllSpecialties();

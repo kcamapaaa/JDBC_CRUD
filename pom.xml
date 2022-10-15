@@ -34,6 +34,31 @@
             <version>4.8.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.17.0</version>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.17.0</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/crud_database?createDatabaseIfNotExist=true</url>
+                    <username>root</username>
+                    <password>root</password>
+                    <changeLogFile>
+                        src/main/resources/db.migration/master.xml
+                    </changeLogFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
