@@ -13,4 +13,6 @@ the status field of developer changes to 0 so you cannot see and manipulate him 
 
 3)Open terminal and write mvn liquibase:update.<br />
 
-4)Enjoy 
+4)Start src/main/java/com/Vladislav/view/Starter.java
+
+5)Enjoy
