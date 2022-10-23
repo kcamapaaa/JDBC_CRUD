@@ -12,6 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +32,7 @@ class SpecialtyServiceTest {
 
     @Test
     public void shouldReturnSpecialtyIfFound() {
-        when(specialtyRepository.getById(1)).thenReturn(specialty);
+        when(specialtyRepository.getById(anyInt())).thenReturn(specialty);
 
         Specialty specialtyById = specialtyService.getSpecialtyById(1);
 
@@ -82,38 +85,38 @@ class SpecialtyServiceTest {
     }
 
     @Test
-    public void shouldReturnOneIfUpdatedCorrect() {
-        when(specialtyRepository.update(specialty, 1)).thenReturn(1);
+    public void shouldReturnSpecialtyIfUpdatedCorrect() {
+        when(specialtyRepository.update(specialty)).thenReturn(specialty);
 
-        int specialtyIndex = specialtyService.updateSpecialty(specialty, 1);
+        Specialty specialtyIndex = specialtyService.updateSpecialty(specialty);
 
-        assertThat(specialtyIndex).isEqualTo(1);
+        assertThat(specialtyIndex).isEqualTo(specialty);
     }
 
     @Test
-    public void shouldReturnZeroIfUpdateWasNotCorrect() {
-        when(specialtyRepository.update(specialty, 1)).thenReturn(0);
+    public void shouldReturnNullIfUpdateWasNotCorrect() {
+        when(specialtyRepository.update(specialty)).thenReturn(null);
 
-        int specialtyIndex = specialtyService.updateSpecialty(specialty, 1);
+        Specialty specialtyIndex = specialtyService.updateSpecialty(specialty);
 
-        assertThat(specialtyIndex).isEqualTo(0);
+        assertThat(specialtyIndex).isNull();
     }
 
     @Test
-    public void shouldReturnOneIfDeletedCorrect() {
-        when(specialtyRepository.deleteById(1)).thenReturn(1);
+    public void shouldReturnTrueIfDeletedCorrect() {
+        when(specialtyRepository.deleteById(anyInt())).thenReturn(true);
 
-        int specialtyIndex = specialtyService.deleteSpecialtyById(1);
+        boolean specialtyBoolean = specialtyService.deleteSpecialtyById(1);
 
-        assertThat(specialtyIndex).isEqualTo(1);
+        assertTrue(specialtyBoolean);
     }
 
     @Test
     public void shouldReturnZeroIfDeleteWasNotCorrect() {
-        when(specialtyRepository.deleteById(1)).thenReturn(0);
+        when(specialtyRepository.deleteById(anyInt())).thenReturn(false);
 
-        int specialtyIndex = specialtyService.deleteSpecialtyById(1);
+        boolean specialtyBoolean = specialtyService.deleteSpecialtyById(1);
 
-        assertThat(specialtyIndex).isEqualTo(0);
+        assertFalse(specialtyBoolean);
     }
 }

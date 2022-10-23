@@ -1,13 +1,20 @@
 package com.Vladislav.service;
 
 import com.Vladislav.model.Specialty;
-import com.Vladislav.repository.DataBaseRepository.DataBaseSpecialtyRepository;
+import com.Vladislav.repository.jdbc.JdbcSpecialtyRepository;
 import com.Vladislav.repository.SpecialtyRepository;
 
 import java.util.List;
 
 public class SpecialtyService {
-    private SpecialtyRepository specialtyRepository = new DataBaseSpecialtyRepository();
+    private final SpecialtyRepository specialtyRepository;
+    public SpecialtyService() {
+        this.specialtyRepository = new JdbcSpecialtyRepository();
+    }
+
+    public SpecialtyService(SpecialtyRepository specialtyRepository) {
+        this.specialtyRepository = specialtyRepository;
+    }
 
     public Specialty getSpecialtyById(int id) {
         return specialtyRepository.getById(id);
@@ -21,11 +28,11 @@ public class SpecialtyService {
         return specialtyRepository.save(specialty);
     }
 
-    public int updateSpecialty(Specialty specialty, int id) {
-        return specialtyRepository.update(specialty, id);
+    public Specialty updateSpecialty(Specialty specialty) {
+        return specialtyRepository.update(specialty);
     }
 
-    public int deleteSpecialtyById(int id) {
+    public boolean deleteSpecialtyById(int id) {
         return specialtyRepository.deleteById(id);
     }
 

@@ -1,96 +1,83 @@
-package com.Vladislav.repository.DataBaseRepository;
+package com.Vladislav.repository.jdbc;
 
 import com.Vladislav.model.Developer;
 import com.Vladislav.model.Skill;
 import com.Vladislav.model.Specialty;
 import com.Vladislav.repository.DeveloperRepository;
 import com.Vladislav.repository.SkillRepository;
-import com.Vladislav.util.ConnectionManager;
+import com.Vladislav.service.DeveloperService;
+import com.Vladislav.util.JdbcUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataBaseDeveloperRepository implements DeveloperRepository {
-    private final Connection connection = ConnectionManager.openConnection();
+public class JdbcDeveloperRepository implements DeveloperRepository {
+    private Developer convertResultSetToDeveloper(ResultSet resultSet) throws SQLException {
+        int devId = resultSet.getInt("id");
+        List<Skill> skills = getSkills(devId);
+        Specialty specialty = getSpecialty(devId);
+        String firstName = resultSet.getString("first_name");
+        String lastName = resultSet.getString("last_name");
+        int checkStatus = resultSet.getInt("status");
+        if (checkStatus == 0) {
+            return null;
+        }
+        return new Developer(devId, firstName, lastName, skills, specialty);
+    }
 
     @Override
     public Developer getById(Integer id) {
-        Developer developer;
-
         String SQL = """
                 SELECT * FROM developers
                 WHERE id = ?
                 """;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQL)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<Skill> skills = getSkills(id);
-            Specialty specialty = getSpecialty(id);
-            int devId = 0;
-            String firstName = null;
-            String lastName = null;
-
-            if (resultSet.next()) {
-                devId = resultSet.getInt("id");
-                firstName = resultSet.getString("first_name");
-                lastName = resultSet.getString("last_name");
-                int checkStatus = resultSet.getInt("status");
-                if (checkStatus == 0) {
-                    return null;
-                }
-                developer = new Developer(firstName, lastName, skills, specialty);
-                developer.setId(devId);
-            } else {
-                return null;
-            }
+            return resultSet.next() ? convertResultSetToDeveloper(resultSet) : null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return developer;
     }
 
     @Override
     public List<Developer> getAll() {
         String SQL = "SELECT id FROM developers";
-        List<Integer> developerCounter = new ArrayList<>();
         List<Developer> developerList = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                developerCounter.add(resultSet.getInt("id"));
-            }
-            for (Integer i : developerCounter) {
-                developerList.add(getById(i));
+                int id = resultSet.getInt("id");
+                developerList.add(getById(id));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return developerList.isEmpty() ? null : developerList;
+        return developerList;
     }
 
     @Override
     public Developer save(Developer developer) {
         String SQL = """
-                INSERT INTO developers (first_name, last_name, status)
-                VALUES(?, ?, 1)
+                INSERT INTO developers (first_name, last_name, status, specialty_id)
+                VALUES(?, ?, 1, ?)
                 """;
         String SQL_skill = "INSERT INTO developer_skill (developer_id, skill_id) VALUES (?, ?)";
-        String SQL_specialty = "INSERT INTO developer_specialty (developer_id, specialty_id) VALUES (?, ?)";
-        int update = 0;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+
+        int update;
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatementWithGeneratedKeys(SQL)) {
             preparedStatement.setString(1, developer.getFirstName());
             preparedStatement.setString(2, developer.getLastName());
+            preparedStatement.setInt(3, developer.getSpecialty().getId());
             update = preparedStatement.executeUpdate();
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int devId = generatedKeys.getInt(1);
                     developer.setId(devId);
+                    developer.setSpecialty(getSpecialty(devId));
                     developer.getSkillList().forEach(x -> setConnectTable(devId, x.getId(), SQL_skill));
-                    int specialtyId = developer.getSpecialty().getId();
-                    setConnectTable(devId, specialtyId, SQL_specialty);
                 }
             }
         } catch (SQLException e) {
@@ -100,33 +87,32 @@ public class DataBaseDeveloperRepository implements DeveloperRepository {
     }
 
     @Override
-    public int update(Developer developer, int id) {
+    public Developer update(Developer developer) {
         String SQL = "UPDATE developers SET first_name = ?, last_name = ? where id = ?;";
-        int update = 0;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQL)) {
             preparedStatement.setString(1, developer.getFirstName());
             preparedStatement.setString(2, developer.getLastName());
-            preparedStatement.setInt(3, id);
-            update = preparedStatement.executeUpdate();
+            preparedStatement.setInt(3, developer.getId());
+            return preparedStatement.executeUpdate() == 0 ? null : developer;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return update;
     }
 
     @Override
-    public int deleteById(Integer id) {
-        String SQL = "UPDATE developers" +
-                "    SET status = 0" +
-                "    WHERE developers.id = ?";
-        int update = 0;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+    public boolean deleteById(Integer id) {
+        String SQL = """
+                UPDATE developers
+                SET status = 0
+                WHERE id = ?
+                """;
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQL)) {
             preparedStatement.setInt(1, id);
-            update = preparedStatement.executeUpdate();
+            int update = preparedStatement.executeUpdate();
+            return update > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return update;
     }
 
     private List<Skill> getSkills(int id) {
@@ -137,7 +123,7 @@ public class DataBaseDeveloperRepository implements DeveloperRepository {
                 WHERE developer_id = ?;    
                 """;
         ArrayList<Skill> skills = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLskill)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQLskill)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -156,30 +142,29 @@ public class DataBaseDeveloperRepository implements DeveloperRepository {
 
     private Specialty getSpecialty(int id) {
         String SQLspecialty = """
-                SELECT id, name FROM
-                specialty JOIN developer_specialty
-                ON (specialty_id = id)
-                WHERE developer_id = ?; 
+                    SELECT s.id, s.name
+                    FROM developers d JOIN specialties s
+                    ON d.specialty_id = s.id
+                    WHERE d.id = ?
                 """;
-        Specialty specialty = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLspecialty)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQLspecialty)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     String specialtyName = resultSet.getString("name");
                     int specialtyId = resultSet.getInt("id");
-                    specialty = new Specialty(specialtyName);
-                    specialty.setId(specialtyId);
+                    return new Specialty(specialtyId, specialtyName);
+                } else {
+                    return null;
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return specialty;
     }
 
     private void setConnectTable(int devId, int itemId, String SQL_query) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_query)) {
+        try (PreparedStatement preparedStatement = JdbcUtils.getPreparedStatement(SQL_query)) {
             preparedStatement.setInt(1, devId);
             preparedStatement.setInt(2, itemId);
             preparedStatement.executeUpdate();

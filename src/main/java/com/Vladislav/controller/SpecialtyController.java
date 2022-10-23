@@ -21,11 +21,11 @@ public class SpecialtyController {
         return specialtyService.addNewSpecialty(specialty);
     }
 
-    public int updateSpecialty(Specialty specialty, int id) {
-        return specialtyService.updateSpecialty(specialty, id);
+    public Specialty updateSpecialty(Specialty specialty) {
+        return specialtyService.updateSpecialty(specialty);
     }
 
-    public int deleteSpecialtyById(int id) {
+    public boolean deleteSpecialtyById(int id) {
         return specialtyService.deleteSpecialtyById(id);
     }
 

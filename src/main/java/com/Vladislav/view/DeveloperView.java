@@ -35,7 +35,7 @@ public class DeveloperView {
 
     public void getAllDevelopers() {
         List<Developer> allDevelopers = developerController.getAllDevelopers();
-        if (allDevelopers == null) {
+        if (allDevelopers.isEmpty()) {
             System.out.println("No developers.");
         } else {
             allDevelopers.stream().filter(Objects::nonNull).forEach(System.out::println);
@@ -51,8 +51,8 @@ public class DeveloperView {
             System.out.println("Incorrect typo.");
             return;
         }
-        int check = developerController.deleteDeveloperById(id);
-        System.out.println(check == 0 ? "Can not delete the developer" : "Successfully deleted!");
+        boolean check = developerController.deleteDeveloperById(id);
+        System.out.println(!check ? "Can not delete the developer" : "Successfully deleted!");
     }
 
     public void addNewDeveloper() {
@@ -61,7 +61,7 @@ public class DeveloperView {
         System.out.println("Enter last name: ");
         String lastName = s.nextLine();
 
-        if(skillController.getAllSkills() == null) {
+        if(skillController.getAllSkills().isEmpty()) {
             System.out.println("Create any skill!");
             return;
         } else {
@@ -113,9 +113,9 @@ public class DeveloperView {
         System.out.println("Enter new last name: ");
         String lastName = s.nextLine();
 
-        Developer developer = new Developer(firstName, lastName);
-        int update = developerController.updateDeveloper(developer, devId);
-        System.out.println(update == 0 ? "Not updated." : "Updated!");
+        Developer developer = new Developer(devId, firstName, lastName);
+        Developer update = developerController.updateDeveloper(developer);
+        System.out.println(update == null ? "Not updated." : "Updated!");
     }
 
     public void printDeveloperOptions() {

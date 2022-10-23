@@ -10,11 +10,20 @@
             <not>
                 <tableExists tableName="developers"/>
                 <tableExists tableName="skills"/>
-                <tableExists tableName="specialty"/>
+                <tableExists tableName="specialties"/>
                 <tableExists tableName="developer_skill"/>
                 <tableExists tableName="developer_specialty"/>
             </not>
         </preConditions>
+
+        <createTable tableName="specialties">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
         <createTable tableName="developers">
             <column name="id" type="int" autoIncrement="true">
@@ -29,6 +38,9 @@
             <column name="status" type="tinyint">
                 <constraints nullable="false"/>
             </column>
+            <column name="specialty_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_developer_specialty" referencedTableName="specialties" referencedColumnNames="id"/>
+            </column>
         </createTable>
 
         <createTable tableName="skills">
@@ -40,14 +52,6 @@
             </column>
         </createTable>
 
-        <createTable tableName="specialty">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
 
         <createTable tableName="developer_skill">
             <column name="developer_id" type="int">
@@ -58,27 +62,12 @@
             </column>
         </createTable>
 
-        <createTable tableName="developer_specialty">
-            <column name="developer_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="specialty_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-        </createTable>
 
         <addForeignKeyConstraint baseTableName="developer_skill" baseColumnNames="developer_id"
                                  constraintName="fk_dev_skill_d" referencedTableName="developers"
                                  referencedColumnNames="id" onDelete="CASCADE"/>
         <addForeignKeyConstraint baseTableName="developer_skill" baseColumnNames="skill_id"
                                  constraintName="fk_dev_skill_s" referencedTableName="skills"
-                                 referencedColumnNames="id" onDelete="CASCADE"/>
-
-        <addForeignKeyConstraint baseTableName="developer_specialty" baseColumnNames="developer_id"
-                                 constraintName="fk_dev_specialty_d" referencedTableName="developers"
-                                 referencedColumnNames="id" onDelete="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="developer_specialty" baseColumnNames="specialty_id"
-                                 constraintName="fk_dev_specialty_s" referencedTableName="specialty"
                                  referencedColumnNames="id" onDelete="CASCADE"/>
     </changeSet>
 

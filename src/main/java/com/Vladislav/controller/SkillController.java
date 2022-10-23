@@ -20,11 +20,11 @@ public class SkillController {
         return skillService.addNewSkill(skill);
     }
 
-    public int updateSkill(Skill skill, int id) {
-        return skillService.updateSkill(skill, id);
+    public Skill updateSkill(Skill skill) {
+        return skillService.updateSkill(skill);
     }
 
-    public int deleteSkillById(int id) {
+    public boolean deleteSkillById(int id) {
         return skillService.deleteSkillById(id);
     }
 }

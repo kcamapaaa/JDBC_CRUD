@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +31,7 @@ class SkillServiceTest {
 
     @Test
     public void shouldReturnSkillById() {
-        when(skillRepository.getById(1)).thenReturn(skill);
+        when(skillRepository.getById(anyInt())).thenReturn(skill);
 
         Skill skillById = skillService.getSkillById(1);
 
@@ -39,7 +41,7 @@ class SkillServiceTest {
 
     @Test
     public void shouldReturnNull() {
-        when(skillRepository.getById(10)).thenReturn(null);
+        when(skillRepository.getById(anyInt())).thenReturn(null);
 
         Skill skillById = skillService.getSkillById(10);
 
@@ -84,38 +86,36 @@ class SkillServiceTest {
 
     @Test
     public void shouldReturnOneIfUpdated() {
-        when(skillRepository.update(skill, 1)).thenReturn(1);
+        when(skillRepository.update(skill)).thenReturn(new Skill(1, "TEST"));
 
-        int skillIndex = skillService.updateSkill(skill, 1);
+        Skill result = skillService.updateSkill(skill);
 
-        assertThat(skillIndex).isEqualTo(1);
+        assertNotNull(result);
     }
 
     @Test
     public void shouldReturnZeroIfNotUpdated() {
-        when(skillRepository.update(skill, 1)).thenReturn(0);
+        when(skillRepository.update(skill)).thenReturn(null);
 
-        int skillIndex = skillService.updateSkill(skill, 1);
+        Skill result = skillService.updateSkill(skill);
 
-        assertThat(skillIndex).isEqualTo(0);
+        assertNull(result);
     }
 
     @Test
     public void shouldReturnOneIfDeleted() {
-        when(skillRepository.deleteById(1)).thenReturn(1);
+        when(skillRepository.deleteById(1)).thenReturn(true);
 
-        int skillIndex = skillService.deleteSkillById(1);
+        boolean result = skillService.deleteSkillById(1);
 
-        assertThat(skillIndex).isEqualTo(1);
+        assertTrue(result);
     }
 
     @Test
     public void shouldReturnZeroIfNotDeleted() {
-        when(skillRepository.deleteById(1)).thenReturn(0);
-
-        int skillIndex = skillService.deleteSkillById(1);
-
-        assertThat(skillIndex).isEqualTo(0);
+        when(skillRepository.deleteById(1)).thenReturn(false);
+       boolean result =  skillService.deleteSkillById(1);
+        assertFalse(result);
     }
 
 }

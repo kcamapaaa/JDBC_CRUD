@@ -31,6 +31,12 @@ public class Developer {
         this.lastName = lastName;
     }
 
+    public Developer(int devId, String firstName, String lastName) {
+        this.id = devId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public int getId() {
         return id;
     }

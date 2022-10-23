@@ -10,6 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,17 +34,17 @@ class DeveloperServiceTest {
 
     @Test
     public void shouldReturnDeveloperById() {
-        when(developerRepository.getById(10)).thenReturn(developer);
+        when(developerRepository.getById(anyInt())).thenReturn(developer);
 
-        Developer developerById = developerService.getDeveloperById(10);
+        Developer developerById = developerService.getDeveloperById(1);
 
         assertThat(developerById).isNotNull();
-        assertThat(developerById.getFirstName()).isEqualTo("Vasya");
+        assertThat(developerById).isEqualTo(developer);
     }
 
     @Test
     public void shouldReturnNullWhenNoDeveloperInDataBase() {
-        when(developerRepository.getById(1)).thenReturn(null);
+        when(developerRepository.getById(anyInt())).thenReturn(null);
 
         Developer developerById = developerService.getDeveloperById(1);
 
@@ -57,12 +61,12 @@ class DeveloperServiceTest {
     }
 
     @Test
-    public void shouldReturnNullWhenCallGetAllDevelopers() {
-        when(developerRepository.getAll()).thenReturn(null);
+    public void shouldReturnEmptyListWhenCallGetAllDevelopers() {
+        when(developerRepository.getAll()).thenReturn(List.of());
 
         List<Developer> allDevelopers = developerService.getAllDevelopers();
 
-        assertThat(allDevelopers).isNull();
+        assertThat(allDevelopers).isEmpty();
     }
 
     @Test
@@ -75,38 +79,49 @@ class DeveloperServiceTest {
     }
 
     @Test
-    public void shouldReturnOneWhenDeveloperWasUpdated() {
-        when(developerRepository.update(developer, 1)).thenReturn(1);
+    public void shouldReturnNullWhenAddingOne() {
+        when(developerRepository.save(developer)).thenReturn(null);
 
-        int updateIndex = developerService.updateDeveloper(developer, 1);
+        Developer newDeveloper = developerService.addNewDeveloper(developer);
 
-        assertThat(updateIndex).isEqualTo(1);
+        assertThat(newDeveloper).isNull();
+    }
+
+
+
+    @Test
+    public void shouldReturnDeveloperWhenDeveloperWasUpdated() {
+        when(developerRepository.update(developer)).thenReturn(developer);
+
+        Developer newDeveloper = developerService.updateDeveloper(developer);
+
+        assertThat(newDeveloper).isNotNull().isEqualTo(developer);
     }
 
     @Test
-    public void shouldReturnZeroWhenNotUpdated() {
-        when(developerRepository.update(developer, 10)).thenReturn(0);
+    public void shouldReturnNullWhenNotUpdated() {
+        when(developerRepository.update(developer)).thenReturn(null);
 
-        int updateIndex = developerService.updateDeveloper(developer, 10);
+        Developer newDeveloper = developerService.updateDeveloper(developer);
 
-        assertThat(updateIndex).isEqualTo(0);
+        assertThat(newDeveloper).isNull();
     }
 
     @Test
-    public void shouldReturnOneWhenDeleteByIdWasCorrect() {
-        when(developerRepository.deleteById(1)).thenReturn(1);
+    public void shouldReturnTrueWhenDeleteByIdWasCorrect() {
+        when(developerRepository.deleteById(anyInt())).thenReturn(true);
 
-        int deleteIndex = developerService.deleteDeveloperById(1);
+        boolean deleteCheck = developerService.deleteDeveloperById(1);
 
-        assertThat(deleteIndex).isEqualTo(1);
+        assertTrue(deleteCheck);
     }
 
     @Test
-    public void shouldReturnZeroWhenNotDeleted() {
-        when(developerRepository.deleteById(10)).thenReturn(0);
+    public void shouldReturnFalseWhenNotDeleted() {
+        when(developerRepository.deleteById(anyInt())).thenReturn(false);
 
-        int deleteIndex = developerService.deleteDeveloperById(10);
+        boolean deleteCheck = developerService.deleteDeveloperById(1);
 
-        assertThat(deleteIndex).isEqualTo(0);
+        assertFalse(deleteCheck);
     }
 }

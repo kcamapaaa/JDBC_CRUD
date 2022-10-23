@@ -3,6 +3,7 @@ package com.Vladislav.view;
 import com.Vladislav.model.Skill;
 import com.Vladislav.controller.SkillController;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -24,7 +25,12 @@ public class SkillView {
     }
 
     public void getAllSkills() {
-            skillController.getAllSkills().stream().sorted().forEach(System.out::println);
+        List<Skill> allSkills = skillController.getAllSkills();
+        if(allSkills.isEmpty()) {
+            System.out.println("No skills.");
+        } else {
+            allSkills.stream().sorted().forEach(System.out::println);
+        }
     }
 
     public void addNewSkill() {
@@ -46,9 +52,9 @@ public class SkillView {
         }
         System.out.println("Enter new name: ");
         String name = s.nextLine();
-        Skill skill = new Skill(name);
-        int update = skillController.updateSkill(skill, id);
-        System.out.println(update == 0 ? "Not updated." : "Updated!");
+        Skill skill = new Skill(id, name);
+        Skill update = skillController.updateSkill(skill);
+        System.out.println(update == null ? "Not updated." : "Updated!");
     }
 
     public void deleteSkillByID() {
@@ -60,8 +66,8 @@ public class SkillView {
             System.out.println("Incorrect typo.");
             return;
         }
-        int update = skillController.deleteSkillById(id);
-        System.out.println(update == 0 ? "Not deleted." : "Deleted!");
+        boolean update = skillController.deleteSkillById(id);
+        System.out.println(!update ? "Not deleted." : "Deleted!");
     }
 
     public void printSkillOptions() {

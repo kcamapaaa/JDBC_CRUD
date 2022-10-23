@@ -5,6 +5,11 @@ public class Skill implements Comparable<Skill> {
     private String name;
 
 
+    public Skill(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Skill(String name) {
         this.name = name;
     }

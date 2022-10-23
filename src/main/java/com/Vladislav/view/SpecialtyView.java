@@ -3,6 +3,7 @@ package com.Vladislav.view;
 import com.Vladislav.controller.SpecialtyController;
 import com.Vladislav.model.Specialty;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class SpecialtyView {
@@ -24,7 +25,12 @@ public class SpecialtyView {
     }
 
     public void getAllSpecialties() {
-        specialtyController.getAllSpecialties().forEach(System.out::println);
+        List<Specialty> allSpecialties = specialtyController.getAllSpecialties();
+        if(allSpecialties.isEmpty()) {
+            System.out.println("No specialties.");
+        } else {
+            allSpecialties.forEach(System.out::println);
+        }
     }
 
     public void addNewSpecialty() {
@@ -45,11 +51,10 @@ public class SpecialtyView {
             return;
         }
         System.out.println("Enter new name: ");
-        s.nextLine();
         String name = s.nextLine();
-        Specialty specialty = new Specialty(name);
-        int update = specialtyController.updateSpecialty(specialty, id);
-        System.out.println(update == 0 ? "Not updated." : "Updated!");
+        Specialty specialty = new Specialty(id, name);
+        Specialty update = specialtyController.updateSpecialty(specialty);
+        System.out.println(update == null ? "Not updated." : "Updated!");
     }
 
     public void deleteSpecialtyById() {
@@ -61,8 +66,8 @@ public class SpecialtyView {
             System.out.println("Incorrect typo.");
             return;
         }
-        int update = specialtyController.deleteSpecialtyById(id);
-        System.out.println(update == 0 ? "Not deleted." : "Deleted!");
+        boolean update = specialtyController.deleteSpecialtyById(id);
+        System.out.println(!update ? "Not deleted." : "Deleted!");
     }
 
     public void printSpecialtyOptions() {

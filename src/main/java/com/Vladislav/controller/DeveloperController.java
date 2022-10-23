@@ -1,7 +1,6 @@
 package com.Vladislav.controller;
 
 import com.Vladislav.model.Developer;
-import com.Vladislav.repository.DataBaseRepository.DataBaseDeveloperRepository;
 import com.Vladislav.service.DeveloperService;
 
 
@@ -22,11 +21,11 @@ public class DeveloperController {
         return developerService.addNewDeveloper(developer);
     }
 
-    public int updateDeveloper(Developer developer, int id) {
-        return developerService.updateDeveloper(developer, id);
+    public Developer updateDeveloper(Developer developer) {
+        return developerService.updateDeveloper(developer);
     }
 
-    public int deleteDeveloperById(int id) {
+    public boolean deleteDeveloperById(int id) {
         return developerService.deleteDeveloperById(id);
     }
 
